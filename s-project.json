@@ -1,12 +1,12 @@
 {
   "name": "deduction",
   "custom": {
-      "webpack": {
-          "configPath": "config/webpack.config.js"
-      }
+    "webpack": {
+      "configPath": "config/webpack.config.js"
+    }
   },
   "plugins": [
-      "serverless-webpack-plugin",
-      "serverless-cors-plugin"
+    "serverless-webpack-plugin",
+    "serverless-cors-plugin"
   ]
 }

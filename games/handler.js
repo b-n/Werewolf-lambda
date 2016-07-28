@@ -6,7 +6,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient({region: 'us-west-2'});
 
 function guid(){function n(){return Math.floor(65536*(1+Math.random())).toString(16).substring(1)}return n()+n()+'-'+n()+'-'+n()+'-'+n()+'-'+n()+n()+n()}
 
-exports.handler = function(event, context, callback) {
+module.exports.handler = function(event, context, callback) {
     
     const operation = event.operation;
 
@@ -53,6 +53,7 @@ function read(id, callback) {
 }
 
 function scan(callback) {
+    console.log(dynamo);
     return dynamo.scan({
         TableName: 'werewolf-game'
     }).promise()
