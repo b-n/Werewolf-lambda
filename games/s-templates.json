@@ -9,5 +9,11 @@
             "operation": "create",
             "message" : "$input.json('$')"
         }
+    },
+    "read": {
+        "application/json": {
+            "operation": "read",
+            "id": "$input.params('id')" 
+        }
     }
 }
