@@ -1,13 +1,11 @@
 'use strict';
 console.log('Loading function');
 const AWS = require('aws-sdk');
+const uuid = require('node-uuid');
 
 const dynamo = new AWS.DynamoDB.DocumentClient({region: 'us-west-2'});
 
-function guid(){function n(){return Math.floor(65536*(1+Math.random())).toString(16).substring(1)}return n()+n()+'-'+n()+'-'+n()+'-'+n()+'-'+n()+n()+n()}
-
 module.exports.handler = function(event, context, callback) {
-    
     const operation = event.operation;
 
     let p;
@@ -31,7 +29,7 @@ function create(item) {
     if (!item.name) { throw new Error('you need to specify a name for this call'); }
     if (!item.players) item.players = [];
     if (!item.phases) item.phases = {};
-    item.id = guid();
+    item.id = uuid.v4();
     item.currentPhase = 0;
     return dynamo.put({
         Item : item,
@@ -53,7 +51,6 @@ function read(id, callback) {
 }
 
 function scan(callback) {
-    console.log(dynamo);
     return dynamo.scan({
         TableName: 'werewolf-game'
     }).promise()

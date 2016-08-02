@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+var path = require('path');
 
 module.exports = {
     // entry: provided by serverless
@@ -10,6 +11,9 @@ module.exports = {
     resolve: {
         extensions: ['', '.js']
     },
+    resolveLoader: [
+        path.join(__dirname, "node_modules")
+    ],
     devtool: 'source-map',
     plugins: [
         new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
