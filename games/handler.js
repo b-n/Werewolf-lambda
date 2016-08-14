@@ -1,13 +1,11 @@
 'use strict';
-import * as AWS from 'aws-sdk';
 import { v4 } from 'node-uuid';
+import { DynamoDB } from 'aws-sdk';
 
-const dynamo = new AWS.DynamoDB.DocumentClient({region: 'us-west-2'});
+export const db = new DynamoDB.DocumentClient({region: 'us-west-2'});
 
 export default ({operation, message, id}, context, callback) => {
-    console.log(operation);
     let p;
-
     switch (operation) {
         case 'scan':
             p = scan();
@@ -19,48 +17,60 @@ export default ({operation, message, id}, context, callback) => {
             p = read(id);
             break;
         default:
-            throw new Error(`Unrecognized operation "${operation}"`);
+            callback(`Unrecognized operation "${operation}"`);
     }
-    
-    return Promise.resolve(p)
-        .then(result => callback(null, result))
-        .catch(error => callback(error));
+
+    p.then(result => {
+        callback(null, result);
+    })
+    .catch(error => {
+        callback(error)
+    });
 }
 
 
 function create(item) {
-    const { name, moderator, players, phases } = item;
+    return new Promise((resolve, reject) => {
+        const { name, moderator, players, phases } = item;
 
-    if (!name) throw new Error('you need to specify a name for this call');
-    if (!moderator) throw new Error('you need to specify a moderator for this call');
+        if (!name) {
+            reject('you need to specify a name for this call');
+            return;
+        }
+        if (!moderator) {
+            reject('you need to specify a moderator for this call');
+            return;
+        }
 
-    const newGame = {
-        id: v4(),
-        currentPhase: 0,
-        name: name,
-        moderator: moderator,
-        players: players ? players : [],
-        phases: phases ? phases : {},
-    }
+        const newGame = {
+            id: v4(),
+            currentPhase: 0,
+            name: name,
+            moderator: moderator,
+            players: players ? players : [],
+            phases: phases ? phases : {},
+        }
 
-    return dynamo.put({
-        Item : newGame,
-        TableName: 'werewolf-game'
-    }).promise()
-    .then(data => {
-        return newGame;
+        return db.put({
+            Item : newGame,
+            TableName: 'werewolf-game'
+        }).promise()
+        .then(data => {
+            return resolve(newGame);
+        })
+        .catch(error => reject(error));
     });
 }
 
 function read(id) {
-    return dynamo.get({
+    return db.get({
         Key : { id : id },
         TableName: 'werewolf-game'
     }).promise();
 }
 
 function scan() {
-    return dynamo.scan({
+    return db.scan({
         TableName: 'werewolf-game'
     }).promise();
 }
