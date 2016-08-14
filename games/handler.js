@@ -1,10 +1,11 @@
 'use strict';
 import { v4 } from 'node-uuid';
 import { DynamoDB } from 'aws-sdk';
+import * as errorMessage from '../lib/errorMessages';
 
 export const db = new DynamoDB.DocumentClient({region: 'us-west-2'});
 
-export default ({operation, message, id}, context, callback) => {
+export default ({operation, id, message}, context, callback) => {
     let p;
     switch (operation) {
         case 'scan':
@@ -17,15 +18,12 @@ export default ({operation, message, id}, context, callback) => {
             p = read(id);
             break;
         default:
-            callback(`Unrecognized operation "${operation}"`);
+            callback(errorMessage.UNRECOGNISED_OPERATION);
     }
 
-    p.then(result => {
-        callback(null, result);
-    })
-    .catch(error => {
-        callback(error)
-    });
+    p
+    .then(result => callback(null, result))
+    .catch(error => callback(error));
 }
 
 
@@ -34,11 +32,11 @@ function create(item) {
         const { name, moderator, players, phases } = item;
 
         if (!name) {
-            reject('you need to specify a name for this call');
+            reject(errorMessage.REQUIRES_NAME);
             return;
         }
         if (!moderator) {
-            reject('you need to specify a moderator for this call');
+            reject(errorMessage.REQUIRES_MODERATOR);
             return;
         }
 
@@ -55,18 +53,24 @@ function create(item) {
             Item : newGame,
             TableName: 'werewolf-game'
         }).promise()
-        .then(data => {
-            return resolve(newGame);
-        })
+        .then(data => resolve(newGame))
         .catch(error => reject(error));
     });
 }
 
 function read(id) {
-    return db.get({
-        Key : { id : id },
-        TableName: 'werewolf-game'
-    }).promise();
+    return new Promise((resolve, reject) => {
+        if (!id) {
+            reject(errorMessage.REQUIRES_ID);
+            return;
+        }
+        return db.get({
+            Key : { id : id },
+            TableName: 'werewolf-game'
+        }).promise()
+        .then(data => resolve(data))
+        .catch(error => reject(error));
+    });
 }
 
 function scan() {
