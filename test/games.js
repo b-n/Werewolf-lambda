@@ -7,7 +7,7 @@ import * as errorMessage from '../lib/errorMessages'
 describe('games', function() {
 
     //aws sdk dummy setup
-    let dummyPromise, scan, scanPromise, put, putPromise, get, getPromise;
+    let dummyPromise, scan, put, get;
     before(function() {
         dummyPromise = stub();
         dummyPromise.resolves('test');

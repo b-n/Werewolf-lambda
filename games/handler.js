@@ -31,14 +31,8 @@ function create(item) {
     return new Promise((resolve, reject) => {
         const { name, moderator, players, phases } = item;
 
-        if (!name) {
-            reject(errorMessage.REQUIRES_NAME);
-            return;
-        }
-        if (!moderator) {
-            reject(errorMessage.REQUIRES_MODERATOR);
-            return;
-        }
+        if (!name) return reject(errorMessage.REQUIRES_NAME);
+        if (!moderator) return reject(errorMessage.REQUIRES_MODERATOR);
 
         const newGame = {
             id: v4(),
@@ -60,10 +54,8 @@ function create(item) {
 
 function read(id) {
     return new Promise((resolve, reject) => {
-        if (!id) {
-            reject(errorMessage.REQUIRES_ID);
-            return;
-        }
+        if (!id) return reject(errorMessage.REQUIRES_ID); 
+
         return db.get({
             Key : { id : id },
             TableName: 'werewolf-game'
