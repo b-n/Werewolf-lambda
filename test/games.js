@@ -1,8 +1,11 @@
-import chai from 'chai';
-import { stub, spy, assert } from 'sinon';
+import { assert } from 'chai';
+import { stub, spy, assert as sinonAssert } from 'sinon';
 import 'sinon-as-promised';
+sinonAssert.expose(assert, { prefix: "" });
+
 import games, { db } from '../games/handler.js'
 import * as errorMessage from '../lib/errorMessages'
+
 
 describe('games', function() {
 
@@ -26,8 +29,8 @@ describe('games', function() {
     //unrecognized function
     it('needs a valid function call', function() {
         const callback = (error, success) => {
-            chai.assert.equal(error, errorMessage.UNRECOGNISED_OPERATION);
-            chai.assert.equal(success, null); 
+            assert.equal(error, errorMessage.UNRECOGNISED_OPERATION);
+            assert.equal(success, null); 
         }
 
         const event = {
@@ -43,8 +46,8 @@ describe('games', function() {
         const callback = (error, success) => {
             assert.calledOnce(scan);
             assert.calledOnce(dummyPromise);
-            chai.assert.equal(error, null);
-            chai.assert.equal(success, 'test'); 
+            assert.equal(error, null);
+            assert.equal(success, 'test'); 
             done(); 
         }
 
@@ -58,8 +61,8 @@ describe('games', function() {
     //create
     it('create requires a name', function(done) {
         const callback = (error, success) => {
-            chai.assert.equal(error, errorMessage.REQUIRES_NAME);
-            chai.assert.equal(success, null); 
+            assert.equal(error, errorMessage.REQUIRES_NAME);
+            assert.equal(success, null); 
             done(); 
         }
 
@@ -73,8 +76,8 @@ describe('games', function() {
     
     it('create requires a moderator', function(done) {
         const callback = (error, success) => {
-            chai.assert.equal(error, errorMessage.REQUIRES_MODERATOR);
-            chai.assert.equal(success, null); 
+            assert.equal(error, errorMessage.REQUIRES_MODERATOR);
+            assert.equal(success, null); 
             done(); 
         }
 
@@ -90,8 +93,8 @@ describe('games', function() {
         const callback = (error, success) => {
             assert.called(put);
             assert.called(dummyPromise);
-            chai.assert.equal(error, null);
-            chai.assert.notEqual(success, null); 
+            assert.equal(error, null);
+            assert.notEqual(success, null); 
             done(); 
         }
 
@@ -108,8 +111,8 @@ describe('games', function() {
         const callback = (error, success) => {
             assert.called(put);
             assert.called(dummyPromise);
-            chai.assert.equal(error, null);
-            chai.assert.notEqual(success, null); 
+            assert.equal(error, null);
+            assert.notEqual(success, null); 
             done(); 
         }
 
@@ -126,8 +129,8 @@ describe('games', function() {
     it('read requires an id', function(done) {
 
         const callback = (error, success) => {
-            chai.assert.equal(error, errorMessage.REQUIRES_ID);
-            chai.assert.equal(success, null); 
+            assert.equal(error, errorMessage.REQUIRES_ID);
+            assert.equal(success, null); 
             done(); 
         }
 
@@ -144,8 +147,8 @@ describe('games', function() {
         const callback = (error, success) => {
             assert.called(get);
             assert.called(dummyPromise);
-            chai.assert.equal(error, null);
-            chai.assert.equal(success, 'test');
+            assert.equal(error, null);
+            assert.equal(success, 'test');
             done(); 
         }
 

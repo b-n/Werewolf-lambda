@@ -1,6 +1,8 @@
-import chai from 'chai';
-import { stub, spy, assert } from 'sinon';
+import { assert } from 'chai';
+import { stub, spy, assert as sinonAssert } from 'sinon';
 import 'sinon-as-promised';
+sinonAssert.expose(assert, { prefix: '' });
+
 import roles, { db } from '../roles/handler.js'
 import * as errorMessage from '../lib/errorMessages'
 
@@ -27,8 +29,8 @@ describe('roles', function() {
     //unrecognized function
     it('needs a valid function call', function() {
         const callback = (error, success) => {
-            chai.assert.equal(error, errorMessage.UNRECOGNISED_OPERATION);
-            chai.assert.equal(success, null); 
+            assert.equal(error, errorMessage.UNRECOGNISED_OPERATION);
+            assert.equal(success, null); 
         }
 
         const event = {
@@ -44,8 +46,8 @@ describe('roles', function() {
         const callback = (error, success) => {
             assert.calledOnce(scan);
             assert.calledOnce(dummyPromise);
-            chai.assert.equal(error, null);
-            chai.assert.equal(success, 'test'); 
+            assert.equal(error, null);
+            assert.equal(success, 'test'); 
             done(); 
         }
 
@@ -59,8 +61,8 @@ describe('roles', function() {
     //create
     it('create requires an order', function(done) {
         const callback = (error, success) => {
-            chai.assert.equal(error, errorMessage.REQUIRES_ORDER);
-            chai.assert.equal(success, null);
+            assert.equal(error, errorMessage.REQUIRES_ORDER);
+            assert.equal(success, null);
             done(); 
         }
 
@@ -77,8 +79,8 @@ describe('roles', function() {
         const callback = (error, success) => {
             assert.called(put);
             assert.called(dummyPromise);
-            chai.assert.equal(error, null);
-            chai.assert.notEqual(success, null); 
+            assert.equal(error, null);
+            assert.notEqual(success, null); 
             done(); 
         }
 
