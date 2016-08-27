@@ -3,6 +3,15 @@
   "custom": {
     "webpack": {
       "configPath": "config/webpack.config.js"
+    },
+    "cors": {
+      "allowOrigin": "*",
+      "allowHeaders": [
+        "Content-Type",
+        "X-Amz-Date",
+        "Authorization",
+        "X-Api-Key"
+      ]
     }
   },
   "plugins": [
