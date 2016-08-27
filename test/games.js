@@ -23,6 +23,20 @@ describe('games', function() {
         get.restore();
     })
 
+    //unrecognized function
+    it('needs a valid function call', function() {
+        const callback = (error, success) => {
+            chai.assert.equal(error, errorMessage.UNRECOGNISED_OPERATION);
+            chai.assert.equal(success, null); 
+        }
+
+        const event = {
+            operation: 'not a real operation'
+        };
+
+        games(event, {}, callback);
+    });
+
     //scan
     it('allow scan', function(done) {
         
@@ -72,8 +86,7 @@ describe('games', function() {
         games(event, {}, callback);
     });
 
-    it('creates successfully', function(done) {
-
+    it('creates successfully - no players', function(done) {
         const callback = (error, success) => {
             assert.called(put);
             assert.called(dummyPromise);
@@ -89,6 +102,23 @@ describe('games', function() {
 
         games(event, {}, callback);
 
+    });
+    
+    it('creates successfully - with players', function(done) {
+        const callback = (error, success) => {
+            assert.called(put);
+            assert.called(dummyPromise);
+            chai.assert.equal(error, null);
+            chai.assert.notEqual(success, null); 
+            done(); 
+        }
+
+        const event = {
+            operation: 'create',
+            message: { moderator: 'testing', name: 'testing2', players: [ { name: 'Joe' } ] }            
+        }
+
+        games(event, {}, callback);
     });
 
     

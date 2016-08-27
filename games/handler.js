@@ -18,7 +18,7 @@ export default ({operation, id, message}, context, callback) => {
             p = read(id);
             break;
         default:
-            callback(errorMessage.UNRECOGNISED_OPERATION);
+            return callback(errorMessage.UNRECOGNISED_OPERATION);
     }
 
     p
@@ -29,7 +29,7 @@ export default ({operation, id, message}, context, callback) => {
 
 function create(item) {
     return new Promise((resolve, reject) => {
-        const { name, moderator, players, phases } = item;
+        const { name, moderator, players } = item;
 
         if (!name) return reject(errorMessage.REQUIRES_NAME);
         if (!moderator) return reject(errorMessage.REQUIRES_MODERATOR);
@@ -39,8 +39,7 @@ function create(item) {
             currentPhase: 0,
             name: name,
             moderator: moderator,
-            players: players ? players : [],
-            phases: phases ? phases : {},
+            players: players ? players : []
         }
 
         return db.put({
