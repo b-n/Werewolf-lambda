@@ -9,33 +9,69 @@
   "memorySize": 1024,
   "authorizer": {},
   "custom": {
+    "cors": {
+      "allowOrigin": "*",
+      "allowHeaders": [
+        "Content-Type",
+        "X-Amz-Date",
+        "Authorization",
+        "X-Api-Key"
+      ]
+    },
     "excludePatterns": []
   },
   "endpoints": [
     {
-      "path": "players",
-      "method": "GET",
+      "path": "games",
+      "method": "POST",
       "type": "AWS",
       "authorizationType": "none",
       "authorizerFunction": false,
       "apiKeyRequired": false,
       "requestParameters": {},
-      "requestTemplates": {
-        "application/json": ""
-      },
+      "requestTemplates": "$${create}",
       "responses": {
         "400": {
           "statusCode": "400"
         },
         "default": {
-          "statusCode": "200",
-          "responseParameters": {},
-          "responseModels": {
-            "application/json;charset=UTF-8": "Empty"
-          },
-          "responseTemplates": {
-            "application/json;charset=UTF-8": ""
-          }
+          "statusCode": "200"
+        }
+      }
+    },
+    {
+      "path": "games",
+      "method": "PUT",
+      "type": "AWS",
+      "authorizationType": "none",
+      "authorizerFunction": false,
+      "apiKeyRequired": false,
+      "requestParameters": {},
+      "requestTemplates": "$${update}",
+      "responses": {
+        "400": {
+          "statusCode": "400"
+        },
+        "default": {
+          "statusCode": "200"
+        }
+      }
+    },
+    {
+      "path": "games",
+      "method": "DELETE",
+      "type": "AWS",
+      "authorizationType": "none",
+      "authorizerFunction": false,
+      "apiKeyRequired": false,
+      "requestParameters": {},
+      "requestTemplates": "$${remove}",
+      "responses": {
+        "400": {
+          "statusCode": "400"
+        },
+        "default": {
+          "statusCode": "200"
         }
       }
     }
