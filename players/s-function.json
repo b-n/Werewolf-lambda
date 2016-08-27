@@ -22,7 +22,7 @@
   },
   "endpoints": [
     {
-      "path": "games",
+      "path": "players/{gameid}",
       "method": "POST",
       "type": "AWS",
       "authorizationType": "none",
@@ -40,7 +40,7 @@
       }
     },
     {
-      "path": "games",
+      "path": "players/{gameid}",
       "method": "PUT",
       "type": "AWS",
       "authorizationType": "none",
@@ -58,7 +58,7 @@
       }
     },
     {
-      "path": "games",
+      "path": "players/{gameid}",
       "method": "DELETE",
       "type": "AWS",
       "authorizationType": "none",

@@ -2,19 +2,21 @@
     "create" : {
         "application/json": {
             "operation": "create",
+            "gameid": "$input.params['gameid']",
             "message" : "$input.json('$')"
         }
     },
     "update" : {
         "application/json": {
             "operation": "update",
+            "gameid": "$input.params['gameid']",
             "message" : "$input.json('$')"
         }
     },
     "remove": {
         "application/json": {
             "operation": "read",
-            "id": "$input.params('id')" 
+            "gameid": "$input.params['gameid']"
         }
     }
 }
