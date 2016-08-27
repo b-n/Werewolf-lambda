@@ -1,0 +1,13 @@
+{
+    "scan": {
+        "application/json": {
+            "operation" : "scan"
+        }
+    },
+    "create" : {
+        "application/json": {
+            "operation": "create",
+            "message" : "$input.json('$')"
+        }
+    }
+}
