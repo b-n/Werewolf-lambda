@@ -7,9 +7,7 @@ export const db = new DynamoDB.DocumentClient({region: 'us-west-2'});
 
 export default ({operation, gameid, message}, context, callback) => {
     
-    if (!gameid) {
-        return callback(errorMessage.REQUIRES_GAMEID);
-    }
+    if (!gameid) return callback(errorMessage.REQUIRES_GAMEID);
     
     db.get({
         TableName : 'werewolf-game',

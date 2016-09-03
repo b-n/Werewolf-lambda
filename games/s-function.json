@@ -1,7 +1,7 @@
 {
   "name": "games",
   "runtime": "nodejs4.3",
-  "description": "Serverless Lambda function for project: deduction",
+  "description": "Deduction games function. Create, scan, get games",
   "customName": false,
   "customRole": false,
   "handler": "handler.default",

@@ -1,12 +1,12 @@
 {
   "name": "players",
   "runtime": "nodejs4.3",
-  "description": "Serverless Lambda function for project: deduction",
+  "description": "Deduction players function. Create/Update/Remove players from a game",
   "customName": false,
   "customRole": false,
-  "handler": "handler.handler",
+  "handler": "handler.default",
   "timeout": 6,
-  "memorySize": 1024,
+  "memorySize": 128,
   "authorizer": {},
   "custom": {
     "excludePatterns": []
