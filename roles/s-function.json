@@ -1,12 +1,12 @@
 {
   "name": "roles",
   "runtime": "nodejs4.3",
-  "description": "Serverless Lambda function for project: deduction",
+  "description": "Deduction roles function. Get/Create roles",
   "customName": false,
   "customRole": false,
   "handler": "handler.default",
   "timeout": 6,
-  "memorySize": 1024,
+  "memorySize": 128,
   "authorizer": {},
   "custom": {
     "excludePatterns": []
