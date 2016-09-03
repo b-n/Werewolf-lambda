@@ -12,7 +12,7 @@ describe('accusations', function() {
     const dummyPlayer3 = { id: '3', name: 'Test3', order: 3, role: 'testRole', alive: true };
     const dummyPlayer4 = { id: '4', name: 'Test4', order: 4, role: 'testRole', alive: true };
     const dummyPlayer5 = { id: '5', name: 'Test5', order: 5, role: 'testRole', alive: false };
-    let dummyGame = {
+    const dummyGame = {
         players: [ dummyPlayer1, dummyPlayer2, dummyPlayer3, dummyPlayer4, dummyPlayer5 ],
         phases: {}
     };
@@ -289,7 +289,7 @@ describe('accusations', function() {
         };
 
         //change the dummygame
-        dummyGame = {
+        const gameWithAccusation = {
             ...dummyGame,
             phases: {
                 '0': {
@@ -297,7 +297,7 @@ describe('accusations', function() {
                 }
             }
         }
-        dummyPromise.onCall(0).resolves({ Item: dummyGame });
+        dummyPromise.onCall(0).resolves({ Item: gameWithAccusation });
 
         const expectedResult = {
             message: errorMessage.ACCUSATION_VOTE_FAILED,
@@ -322,7 +322,7 @@ describe('accusations', function() {
             assert.calledOnce(get);
             assert.calledOnce(put);
             assert.calledTwice(dummyPromise);
-            assert.deepEqual(success, expectedResult );
+            assert.deepEqual(success, expectedResult);
             assert.equal(error, null); 
             done(); 
         });
