@@ -21,9 +21,6 @@ describe('accusations', function() {
     let dummyPromise, put, get;
     before(function() {
         dummyPromise = stub();
-        dummyPromise.onCall(0).resolves({ Item: dummyGame });
-        dummyPromise.onCall(1).resolves('test');
-
         put = stub(db, "put", () => ({ promise: dummyPromise }));
         get = stub(db, "get", () => ({ promise: dummyPromise }));
     });
@@ -34,47 +31,41 @@ describe('accusations', function() {
     });
 
     beforeEach(function() {
+        dummyPromise.onCall(0).resolves({ Item: dummyGame });
+        dummyPromise.onCall(1).resolves('test');
         put.reset();
         get.reset();
         dummyPromise.reset();
-    })
+    });
     
     //requires a gameid
     it('requires a game id', function() {
-        const callback = (error, success) => {        
-            assert.equal(error, errorMessage.REQUIRES_GAMEID);
-            assert.equal(success, null); 
-        }
 
         const event = {
             operation: 'not a real operation'
         };
 
-        accusations(event, {}, callback);
+        accusations(event, {}, (error, success) => {        
+            assert.equal(error, errorMessage.REQUIRES_GAMEID);
+            assert.equal(success, null); 
+        });
     });
 
     it('needs a phase', function() {
-        const callback = (error, success) => {
-            assert.equal(error, errorMessage.REQUIRES_PHASE);
-            assert.equal(success, null); 
-        }
 
         const event = {
             gameid: '123test',
             operation: 'not a real operation'
         };
 
-        accusations(event, {}, callback);
+        accusations(event, {}, (error, success) => {
+            assert.equal(error, errorMessage.REQUIRES_PHASE);
+            assert.equal(success, null); 
+        });
     });
 
     //unrecognized function
     it('needs a valid function call', function() {
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(dummyPromise);
-            assert.equal(error, errorMessage.UNRECOGNISED_OPERATION);
-            assert.equal(success, null); 
-        }
 
         const event = {
             gameid: '123test',
@@ -82,9 +73,13 @@ describe('accusations', function() {
             operation: 'not a real operation'
         };
 
-        accusations(event, {}, callback);
+        accusations(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(dummyPromise);
+            assert.equal(error, errorMessage.UNRECOGNISED_OPERATION);
+            assert.equal(success, null); 
+        });
     });
-
 
     //create
     it('create fails no accused', function(done) {
@@ -92,13 +87,6 @@ describe('accusations', function() {
             accusedBy: [ dummyPlayer2.id, dummyPlayer3.id ]
         };
 
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(dummyPromise);
-            assert.equal(success, null);
-            assert.equal(error, errorMessage.REQUIRES_ACCUSED);
-            done();
-        }
 
         const event = {
             gameid: '123test',
@@ -107,7 +95,13 @@ describe('accusations', function() {
             message: accusation
         };
 
-        accusations(event, {}, callback);
+        accusations(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(dummyPromise);
+            assert.equal(success, null);
+            assert.equal(error, errorMessage.REQUIRES_ACCUSED);
+            done();
+        });
     });
 
     it('create fails no accusedby', function(done) {
@@ -115,13 +109,6 @@ describe('accusations', function() {
             accused: dummyPlayer1.id
         };
 
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(dummyPromise);
-            assert.equal(success, null);
-            assert.equal(error, errorMessage.REQUIRES_ACCUSEDBY);
-            done();
-        }
 
         const event = {
             gameid: '123test',
@@ -130,7 +117,13 @@ describe('accusations', function() {
             message: accusation
         };
 
-        accusations(event, {}, callback);
+        accusations(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(dummyPromise);
+            assert.equal(success, null);
+            assert.equal(error, errorMessage.REQUIRES_ACCUSEDBY);
+            done();
+        });
     });
 
     it('create fails invalid user', function(done) {
@@ -139,14 +132,6 @@ describe('accusations', function() {
             accusedBy: [ dummyPlayer2.id, dummyPlayer5.id ] //player 5 is not alive
         };
 
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(dummyPromise);
-            assert.equal(success, null);
-            assert.equal(error, errorMessage.PLAYER_NOT_EXIST_OR_ALIVE);
-            done();
-        }
-
         const event = {
             gameid: '123test',
             phase: 0,
@@ -154,7 +139,14 @@ describe('accusations', function() {
             message: accusation
         };
 
-        accusations(event, {}, callback);
+        accusations(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(dummyPromise);
+            assert.equal(success, null);
+            assert.equal(error, errorMessage.PLAYER_NOT_EXIST_OR_ALIVE);
+            done();
+        });
+
     });
 
     it('create fails requires vote object', function(done) {
@@ -163,13 +155,6 @@ describe('accusations', function() {
             accusedBy: [ dummyPlayer2.id, dummyPlayer3.id ] 
         };
 
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(dummyPromise);
-            assert.equal(success, null);
-            assert.equal(error, errorMessage.REQUIRES_VOTES);
-            done();
-        }
 
         const event = {
             gameid: '123test',
@@ -178,7 +163,13 @@ describe('accusations', function() {
             message: accusation
         };
 
-        accusations(event, {}, callback);
+        accusations(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(dummyPromise);
+            assert.equal(success, null);
+            assert.equal(error, errorMessage.REQUIRES_VOTES);
+            done();
+        });
     });
 
     it('create fails requires valid votes', function(done) {
@@ -188,13 +179,6 @@ describe('accusations', function() {
             votes: [ { player: dummyPlayer5.id, die: true } ] //should have all alive players 
         };
 
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(dummyPromise);
-            assert.equal(success, null);
-            assert.equal(error, errorMessage.REQUIRES_VOTES);
-            done();
-        }
 
         const event = {
             gameid: '123test',
@@ -203,7 +187,13 @@ describe('accusations', function() {
             message: accusation
         };
 
-        accusations(event, {}, callback);
+        accusations(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(dummyPromise);
+            assert.equal(success, null);
+            assert.equal(error, errorMessage.REQUIRES_VOTES);
+            done();
+        });
     });
 
     it('creates a not enough accused accusation', function(done) {
@@ -224,14 +214,6 @@ describe('accusations', function() {
             }
         };
 
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(put);
-            assert.calledTwice(dummyPromise);
-            assert.deepEqual(success, expectedResult );
-            assert.equal(error, null); 
-            done(); 
-        }
 
         const event = {
             operation: 'create',
@@ -240,7 +222,14 @@ describe('accusations', function() {
             message: accusation
         }
 
-        accusations(event, {}, callback);
+        accusations(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(put);
+            assert.calledTwice(dummyPromise);
+            assert.deepEqual(success, expectedResult );
+            assert.equal(error, null); 
+            done(); 
+        });
     });
 
     it('creates a success vote', function(done) {
@@ -269,14 +258,6 @@ describe('accusations', function() {
             }
         };
 
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(put);
-            assert.calledTwice(dummyPromise);
-            assert.deepEqual(success, expectedResult );
-            assert.equal(error, null); 
-            done(); 
-        }
 
         const event = {
             operation: 'create',
@@ -285,7 +266,14 @@ describe('accusations', function() {
             message: accusation
         }
 
-        accusations(event, {}, callback);
+        accusations(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(put);
+            assert.calledTwice(dummyPromise);
+            assert.deepEqual(success, expectedResult );
+            assert.equal(error, null); 
+            done(); 
+        });
     });
     
     it('creates a failed vote', function(done) {
@@ -300,6 +288,7 @@ describe('accusations', function() {
             ]
         };
 
+        //change the dummygame
         dummyGame = {
             ...dummyGame,
             phases: {
@@ -308,6 +297,7 @@ describe('accusations', function() {
                 }
             }
         }
+        dummyPromise.onCall(0).resolves({ Item: dummyGame });
 
         const expectedResult = {
             message: errorMessage.ACCUSATION_VOTE_FAILED,
@@ -315,20 +305,11 @@ describe('accusations', function() {
                 ...dummyGame,
                 phases: {
                     '0': {
-                        accusations: [ accusation ]
+                        accusations: [ { existing: 'accusation' }, accusation ]
                     }
                 } 
             }
         };
-
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(put);
-            assert.calledTwice(dummyPromise);
-            assert.deepEqual(success, expectedResult );
-            assert.equal(error, null); 
-            done(); 
-        }
 
         const event = {
             operation: 'create',
@@ -337,7 +318,14 @@ describe('accusations', function() {
             message: accusation
         }
 
-        accusations(event, {}, callback);
+        accusations(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(put);
+            assert.calledTwice(dummyPromise);
+            assert.deepEqual(success, expectedResult );
+            assert.equal(error, null); 
+            done(); 
+        });
     });
 
 });

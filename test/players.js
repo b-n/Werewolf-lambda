@@ -18,9 +18,6 @@ describe('players', function() {
     let dummyPromise, put, get;
     before(function() {
         dummyPromise = stub();
-        dummyPromise.onCall(0).resolves({ Item: dummyGame });
-        dummyPromise.onCall(1).resolves('test');
-
         put = stub(db, "put", () => ({ promise: dummyPromise }));
         get = stub(db, "get", () => ({ promise: dummyPromise }));
     });
@@ -31,6 +28,8 @@ describe('players', function() {
     });
 
     beforeEach(function() {
+        dummyPromise.onCall(0).resolves({ Item: dummyGame });
+        dummyPromise.onCall(1).resolves('test');
         put.reset();
         get.reset();
         dummyPromise.reset();
@@ -38,33 +37,30 @@ describe('players', function() {
     
     //requires a gameid
     it('requires a game id', function() {
-        const callback = (error, success) => {        
-            assert.equal(error, errorMessage.REQUIRES_GAMEID);
-            assert.equal(success, null); 
-        }
-
         const event = {
             operation: 'not a real operation'
         };
 
-        players(event, {}, callback);
+        players(event, {}, (error, success) => {        
+            assert.equal(error, errorMessage.REQUIRES_GAMEID);
+            assert.equal(success, null); 
+        });
     });
 
     //unrecognized function
     it('needs a valid function call', function() {
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(dummyPromise);
-            assert.equal(error, errorMessage.UNRECOGNISED_OPERATION);
-            assert.equal(success, null); 
-        }
 
         const event = {
             gameid: '123test',
             operation: 'not a real operation'
         };
 
-        players(event, {}, callback);
+        players(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(dummyPromise);
+            assert.equal(error, errorMessage.UNRECOGNISED_OPERATION);
+            assert.equal(success, null); 
+        });
     });
 
     //create
@@ -79,22 +75,19 @@ describe('players', function() {
             valid: false
         };
 
-
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(dummyPromise);
-            assert.deepEqual(error, [ expectedResult ] );
-            assert.equal(success, null); 
-            done(); 
-        }
-
         const event = {
             operation: 'create',
             gameid: '123test',
             message: [ createUser ]
         }
 
-        players(event, {}, callback);
+        players(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(dummyPromise);
+            assert.deepEqual(error, [ expectedResult ] );
+            assert.equal(success, null); 
+            done(); 
+        });
     });
     
     it('creates a user', function(done) {
@@ -105,7 +98,13 @@ describe('players', function() {
             alive: true
         };
 
-        const callback = (error, success) => {
+        const event = {
+            operation: 'create',
+            gameid: '123test',
+            message: [ createUser ]
+        }
+
+        players(event, {}, (error, success) => {
             assert.calledOnce(get);
             assert.calledTwice(dummyPromise);
             assert.equal(success.players.length, 3);
@@ -118,14 +117,7 @@ describe('players', function() {
             assert.deepEqual(newPlayerWithoutId, createUser);
             assert.equal(error, null); 
             done(); 
-        }
-        const event = {
-            operation: 'create',
-            gameid: '123test',
-            message: [ createUser ]
-        }
-
-        players(event, {}, callback);
+        });
     });
     
     //remove
@@ -135,7 +127,13 @@ describe('players', function() {
             players: [ dummyPlayer2 ]
         };
 
-        const callback = (error, success) => {
+        const event = {
+            operation: 'remove',
+            gameid: '123test',
+            message: [ dummyPlayer1.id ]
+        }
+
+        players(event, {}, (error, success) => {
             assert.calledOnce(get);
             assert.calledOnce(put);
             assert.calledTwice(dummyPromise);
@@ -144,14 +142,7 @@ describe('players', function() {
             assert.deepEqual(success, expectedResult);
             assert.equal(error, null); 
             done(); 
-        }
-        const event = {
-            operation: 'remove',
-            gameid: '123test',
-            message: [ dummyPlayer1.id ]
-        }
-
-        players(event, {}, callback);
+        });
     });
 
     //update
@@ -169,21 +160,20 @@ describe('players', function() {
             players: [ newUpdatedUser, dummyPlayer2 ]
         };
 
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(put);
-            assert.calledTwice(dummyPromise);
-            assert.deepEqual(success, expectedResult);
-            assert.equal(error, null); 
-            done(); 
-        }
         const event = {
             operation: 'update',
             gameid: '123test',
             message: [ newUpdatedUser ]
         }
 
-        players(event, {}, callback);
+        players(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(put);
+            assert.calledTwice(dummyPromise);
+            assert.deepEqual(success, expectedResult);
+            assert.equal(error, null); 
+            done(); 
+        });
     });
     
     //update
@@ -197,21 +187,20 @@ describe('players', function() {
             players: [ dummyPlayer1, dummyPlayer2 ]
         };
 
-        const callback = (error, success) => {
-            assert.calledOnce(get);
-            assert.calledOnce(put);
-            assert.calledTwice(dummyPromise);
-            assert.deepEqual(success, expectedResult);
-            assert.equal(error, null); 
-            done(); 
-        }
         const event = {
             operation: 'update',
             gameid: '123test',
             message: [ newUpdatedUser ]
         }
 
-        players(event, {}, callback);
+        players(event, {}, (error, success) => {
+            assert.calledOnce(get);
+            assert.calledOnce(put);
+            assert.calledTwice(dummyPromise);
+            assert.deepEqual(success, expectedResult);
+            assert.equal(error, null); 
+            done(); 
+        });
     });
 
 });
