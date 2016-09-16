@@ -1,7 +1,7 @@
 'use strict';
 import { DynamoDB } from 'aws-sdk';
 import * as errorMessage from '../lib/errorMessages';
-import { validatePlayer } from '../lib/validations';
+import { dynamoDoc } from '../lib/dynamo';
 
 export const db = new DynamoDB.DocumentClient({region: 'us-west-2'});
 
@@ -11,7 +11,7 @@ export default ({operation, gameid, phase, message}, context, callback) => {
     if (phase === undefined) return callback(errorMessage.REQUIRES_PHASE);
 
     db.get({
-            TableName : 'werewolf-game',
+            TableName : dynamoDoc.GAME,
             Key: { id : gameid }
     }).promise()
     .then(data => {
@@ -28,7 +28,7 @@ export default ({operation, gameid, phase, message}, context, callback) => {
     })
     .then(data => {
         return db.put({
-            TableName : 'werewolf-game',
+            TableName : dynamoDoc.GAME,
             Item : data.game
         }).promise()
         .then(result => data)
@@ -59,7 +59,7 @@ function create(accusation, phase, game) {
                 ...accusation,
                 status: 'Cancelled'
             }
-            const newGame = addAccusationToGame(game, phase, accusation);
+            const newGame = addAccusationToGame(game, phase, newAccusation);
             
             return resolve({ message : errorMessage.ACCUSATION_NOT_ENOUGH_ACCUSERS, game : newGame });
         }
@@ -86,7 +86,7 @@ function create(accusation, phase, game) {
             status: voteSuccess ? 'Success' : 'Failed'
         };
 
-        const gameWithAccusation = addAccusationToGame(game, phase, accusation);
+        const gameWithAccusation = addAccusationToGame(game, phase, newAccusation);
 
         if (voteSuccess) {
             const newGame = {
@@ -120,13 +120,11 @@ function addAccusationToGame(game, phase, accusation) {
 
     const existingAccusations = (game.phases[phase] && game.phases[phase].accusations) ? game.phases[phase].accusations : [];
 
-    const newAccusations = existingAccusations.concat(accusation);
-
     const existingPhase = game.phases[phase] ? game.phases[phase] : {};
 
     const newPhase = {
         ...existingPhase,
-        accusations: newAccusations
+        accusations: existingAccusations.concat(accusation)
     };
 
     return {

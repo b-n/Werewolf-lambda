@@ -31,7 +31,7 @@ export default function({operation, gameId, phase}, event, callback) {
             Item: game
         })
         .then(result => game)
-        .catch(error => throw new Error(GAME_SAVE_FAILED));
+        .catch(error => { throw new Error(GAME_SAVE_FAILED)});
     })
     .then(result => callback(null, result))
     .catch(error => callback(error));
