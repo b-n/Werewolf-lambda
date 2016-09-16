@@ -1,0 +1,25 @@
+action: {
+    id: uuid,
+    actionTitle: <name title>
+    on: <night/death>,
+    type: <kill/save/none/give>,
+    uses: -1 //-1 = infinity,
+    showOnSummary: <true/false>,
+    summaryVerb: <str>,
+    instruction: <str>,
+    requiresTarget: <true/false>
+    give: <id>
+}
+
+
+
+
+
+{
+on: "night",
+showOnSummary: true,
+uses: -1,
+summaryVerb: "was assassinated by the Masons",
+instruction: "Has anyone mentioned the Masons? If so, select them to kill them",
+type: "kill"
+}
