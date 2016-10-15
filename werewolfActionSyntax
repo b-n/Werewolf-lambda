@@ -7,8 +7,9 @@ action: {
     showOnSummary: <true/false>,
     summaryVerb: <str>,
     instruction: <str>,
-    requiresTarget: <true/false>
-    give: <id>
+    requiresTarget: <true/false>,
+    give: <id>,
+    order <number>
 }
 
 
